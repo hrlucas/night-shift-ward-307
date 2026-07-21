@@ -1,0 +1,449 @@
+#ifndef I18N_H
+#define I18N_H
+
+/**
+ * @file i18n.h
+ * @brief Banco central de textos do jogo (somente português).
+ *
+ * O jogo tem um único idioma. Este módulo não faz seleção de idioma: mantém
+ * uma tabela de textos indexada por StringID e a devolve por i18n_get(). Manter
+ * todo o texto visível aqui separa a lógica do conteúdo — bom para explicar e
+ * fácil de revisar.
+ */
+
+typedef enum {
+    STR_BOOT_INIT,
+    STR_BOOT_DONE,
+
+    STR_PRESS_ANY_KEY,
+
+    STR_MENU_TITLE,
+    STR_MENU_NEW_GAME,
+    STR_MENU_LOAD_GAME,
+    STR_MENU_QUIT,      /* "[3] Sair" — quando há save e o menu tem 3 itens */
+    STR_MENU_QUIT_ALT,  /* "[2] Sair" — quando não há save e o menu tem 2 itens */
+    STR_SELECT_OPTION,
+
+    STR_MSG_STARTING_NEW_GAME,
+    STR_MSG_LOADING_GAME,
+    STR_MSG_NO_SAVE,
+    STR_MSG_QUITTING,
+    STR_THANK_YOU,
+    STR_MSG_INVALID_OPTION_RETRY,
+
+    /* Salvamento em arquivo texto */
+    STR_SAVE_SAVING,
+
+    /* Menu de pausa (Esc durante o plantão) */
+    STR_PAUSE_TITLE,
+    STR_PAUSE_CONTINUE,
+    STR_PAUSE_SAVE,
+    STR_PAUSE_SAVE_QUIT,
+    STR_PAUSE_QUIT,
+
+    /* Guia de jogo, mostrado antes da história começar */
+    STR_GUIDE_TITLE,
+    STR_GUIDE_CLOCK,
+    STR_GUIDE_KEYS,
+    STR_GUIDE_PAUSED_ON_CHOICE,
+    STR_GUIDE_SAVE,
+    STR_GUIDE_ESC,
+
+    STR_PRESS_ANY_KEY_RETURN,
+    STR_CONTINUE_PROMPT,
+
+    /* Character creation */
+    STR_CC_TITLE,
+    STR_CC_NAME_PROMPT,
+    STR_CC_BIRTHDATE_PROMPT,
+    STR_CC_BIRTHDATE_INVALID,
+    STR_CC_SEX_PROMPT,
+    STR_CC_SEX_MALE,
+    STR_CC_SEX_FEMALE,
+    STR_CC_AGE_LABEL,
+    STR_CC_CONFIRM,
+
+    /* Intro */
+    STR_INTRO_FIRST_SHIFT,
+    STR_INTRO_SHIFT_LABEL,
+    STR_INTRO_SHIFT_HOURS,
+    STR_INTRO_GOOD_LUCK,
+
+    /* Opening beats (set the emotional stakes; no twist reveal) */
+    STR_OPENING_1,
+    STR_OPENING_2,
+    STR_OPENING_3,
+
+    /* HUD */
+    STR_HUD_AFFLICTION,
+
+    /* Rooms */
+    STR_ROOM_MONITORING_NAME,
+    STR_ROOM_RECEPTION_NAME,
+    STR_ROOM_MORGUE_NAME,
+    STR_ROOM_SUPPLY_NAME,
+
+    /* Ambient call announcements (picked at random before any call's
+     * specific content, so the sensory framing doesn't repeat) */
+    STR_ANNOUNCE_PHONE_RECEPTION,
+    STR_ANNOUNCE_INTERCOM,
+    STR_ANNOUNCE_VOICE_HALLWAY,
+    STR_ANNOUNCE_CALL_LIGHT,
+    STR_ANNOUNCE_FOOTSTEPS,
+
+    /* Sair no meio do plantão (pelo menu de pausa) */
+    STR_QUIT_CONFIRMED,
+
+    /* Generic choice options */
+    STR_OPT_ANSWER,
+    STR_OPT_IGNORE,
+    STR_OPT_OPEN,
+    STR_OPT_DONT_OPEN,
+    STR_EV_CALL_RECEIVED,
+
+    /* Ambient */
+    STR_EV_MONITOR_FLICKER,
+
+    /* Reception call */
+    STR_EV_CALL_RECEPTION,
+    STR_EV_RECEPTION_EMPTY,
+
+    /* The call is himself */
+    STR_EV_PHONE_RINGS,
+    STR_EV_PHONE_STATIC,
+    STR_EV_PHONE_WAS_YOU,
+
+    /* Knock at the door */
+    STR_EV_KNOCK,
+    STR_EV_KNOCK_PROMPT,
+    STR_EV_KNOCK_OPENED_NOBODY,
+    STR_EV_KNOCK_NOT_OPENED,
+
+    /* Morgue call */
+    STR_EV_MORGUE_CALL,
+    STR_EV_MORGUE_TEXT,
+
+    /* Frases ambientes de clima/aflição, disparadas aleatoriamente ao longo do
+     * turno para manter o jogador em alerta. As últimas (marcadas em gameplay.c
+     * como "de custo") também elevam a aflição em +1/+2 ao aparecer. */
+    STR_STINGER_WHISPER,
+    STR_STINGER_FOOTSTEPS,
+    STR_STINGER_DISTANT_SCREAM,
+    STR_STINGER_WRONG_SILENCE,
+    STR_STINGER_COLD_DRAFT,
+    STR_STINGER_FLICKER,
+    STR_STINGER_WALLS_SPEAK,
+    STR_STINGER_MORGUE_COLD,
+    STR_STINGER_BREATH_NECK,
+    STR_STINGER_NAME_CALLED,
+    STR_STINGER_SHADOW_DOOR,
+    STR_STINGER_EMPTY_BED,
+    /* Stingers "de custo": elevam a aflição além de assustar. */
+    STR_STINGER_AFFLICTION_RISES,
+    STR_STINGER_DREAD_GROWS,
+    STR_STINGER_NOT_ALONE,
+
+    /* Patient calls */
+    STR_ROOM_PATIENT_NAME,
+    STR_PATIENT_ROOM_LABEL,
+    STR_PATIENT_CALL_BUZZER,
+    STR_PATIENT_CALL_CORRIDOR_FAINT,
+    STR_PATIENT_CALL_FALL,
+    STR_PATIENT_TRAVEL,
+
+    STR_PATIENT_ARCH_CONFUSED_ELDER,
+    STR_PATIENT_ARCH_SCARED_CHILD,
+    STR_PATIENT_ARCH_AGGRESSIVE,
+    STR_PATIENT_ARCH_CATATONIC,
+    STR_PATIENT_ARCH_ANXIOUS_ADULT,
+    STR_PATIENT_ARCH_SILENT_TEEN,
+    STR_PATIENT_ARCH_RESIGNED_TERMINAL,
+    STR_PATIENT_ARCH_FAKE_ASLEEP,
+
+    STR_TREATMENT_NEED_WATER,
+    STR_TREATMENT_NEED_MEDICATION,
+    STR_TREATMENT_NEED_VACCINE,
+    STR_TREATMENT_NEED_RESTRAINT,
+    STR_TREATMENT_NEED_COMFORT,
+
+    STR_OPT_ADMINISTER,
+    STR_OPT_REFUSE,
+
+    STR_TREATMENT_SUCCESS_WATER,
+    STR_TREATMENT_SUCCESS_MEDICATION,
+    STR_TREATMENT_SUCCESS_VACCINE,
+    STR_TREATMENT_SUCCESS_RESTRAINT,
+    STR_TREATMENT_SUCCESS_COMFORT,
+
+    STR_TREATMENT_COMPLICATION_WATER,
+    STR_TREATMENT_COMPLICATION_MEDICATION,
+    STR_TREATMENT_COMPLICATION_VACCINE,
+    STR_TREATMENT_COMPLICATION_RESTRAINT,
+    STR_TREATMENT_COMPLICATION_COMFORT,
+
+    STR_OPT_CALL_HELP,
+    STR_OPT_SNEAK_OUT,
+    STR_COMPLICATION_HELP_RESOLUTION,
+    STR_COMPLICATION_SNEAK_RESOLUTION,
+
+    STR_TREATMENT_REFUSED,
+
+    STR_NEGLECT_WORSENED_1,
+    STR_NEGLECT_WORSENED_2,
+    STR_NEGLECT_DIED_1,
+    STR_NEGLECT_DIED_2,
+
+    /* Patient scenarios (20 hand-authored cases) + shared call prompts */
+    STR_PATIENT_GO_PROMPT,
+    STR_OPT_GO_NOW,
+    STR_OPT_IGNORE_CALL,
+    STR_PATIENT_TREAT_PROMPT,
+
+    STR_SC01_CALL,
+    STR_SC01_COND,
+    STR_SC01_O1,
+    STR_SC01_O2,
+    STR_SC01_O3,
+    STR_SC01_R1,
+    STR_SC01_R2,
+    STR_SC01_R3,
+    STR_SC01_COMP,
+    STR_SC01_NEG,
+
+    STR_SC02_CALL,
+    STR_SC02_COND,
+    STR_SC02_O1,
+    STR_SC02_O2,
+    STR_SC02_O3,
+    STR_SC02_R1,
+    STR_SC02_R2,
+    STR_SC02_R3,
+    STR_SC02_COMP,
+    STR_SC02_NEG,
+
+    STR_SC03_CALL,
+    STR_SC03_COND,
+    STR_SC03_O1,
+    STR_SC03_O2,
+    STR_SC03_O3,
+    STR_SC03_R1,
+    STR_SC03_R2,
+    STR_SC03_R3,
+    STR_SC03_COMP,
+    STR_SC03_NEG,
+
+    STR_SC04_CALL,
+    STR_SC04_COND,
+    STR_SC04_O1,
+    STR_SC04_O2,
+    STR_SC04_O3,
+    STR_SC04_R1,
+    STR_SC04_R2,
+    STR_SC04_R3,
+    STR_SC04_COMP,
+    STR_SC04_NEG,
+
+    STR_SC05_CALL,
+    STR_SC05_COND,
+    STR_SC05_O1,
+    STR_SC05_O2,
+    STR_SC05_O3,
+    STR_SC05_R1,
+    STR_SC05_R2,
+    STR_SC05_R3,
+    STR_SC05_COMP,
+    STR_SC05_NEG,
+
+    STR_SC06_CALL,
+    STR_SC06_COND,
+    STR_SC06_O1,
+    STR_SC06_O2,
+    STR_SC06_O3,
+    STR_SC06_R1,
+    STR_SC06_R2,
+    STR_SC06_R3,
+    STR_SC06_COMP,
+    STR_SC06_NEG,
+
+    STR_SC07_CALL,
+    STR_SC07_COND,
+    STR_SC07_O1,
+    STR_SC07_O2,
+    STR_SC07_O3,
+    STR_SC07_R1,
+    STR_SC07_R2,
+    STR_SC07_R3,
+    STR_SC07_COMP,
+    STR_SC07_NEG,
+
+    STR_SC08_CALL,
+    STR_SC08_COND,
+    STR_SC08_O1,
+    STR_SC08_O2,
+    STR_SC08_O3,
+    STR_SC08_R1,
+    STR_SC08_R2,
+    STR_SC08_R3,
+    STR_SC08_COMP,
+    STR_SC08_NEG,
+
+    STR_SC09_CALL,
+    STR_SC09_COND,
+    STR_SC09_O1,
+    STR_SC09_O2,
+    STR_SC09_O3,
+    STR_SC09_R1,
+    STR_SC09_R2,
+    STR_SC09_R3,
+    STR_SC09_COMP,
+    STR_SC09_NEG,
+
+    STR_SC10_CALL,
+    STR_SC10_COND,
+    STR_SC10_O1,
+    STR_SC10_O2,
+    STR_SC10_O3,
+    STR_SC10_R1,
+    STR_SC10_R2,
+    STR_SC10_R3,
+    STR_SC10_COMP,
+    STR_SC10_NEG,
+
+    STR_SC11_CALL,
+    STR_SC11_COND,
+    STR_SC11_O1,
+    STR_SC11_O2,
+    STR_SC11_O3,
+    STR_SC11_R1,
+    STR_SC11_R2,
+    STR_SC11_R3,
+    STR_SC11_COMP,
+    STR_SC11_NEG,
+
+    STR_SC12_CALL,
+    STR_SC12_COND,
+    STR_SC12_O1,
+    STR_SC12_O2,
+    STR_SC12_O3,
+    STR_SC12_R1,
+    STR_SC12_R2,
+    STR_SC12_R3,
+    STR_SC12_COMP,
+    STR_SC12_NEG,
+
+    STR_SC13_CALL,
+    STR_SC13_COND,
+    STR_SC13_O1,
+    STR_SC13_O2,
+    STR_SC13_O3,
+    STR_SC13_R1,
+    STR_SC13_R2,
+    STR_SC13_R3,
+    STR_SC13_COMP,
+    STR_SC13_NEG,
+
+    STR_SC14_CALL,
+    STR_SC14_COND,
+    STR_SC14_O1,
+    STR_SC14_O2,
+    STR_SC14_O3,
+    STR_SC14_R1,
+    STR_SC14_R2,
+    STR_SC14_R3,
+    STR_SC14_COMP,
+    STR_SC14_NEG,
+
+    STR_SC15_CALL,
+    STR_SC15_COND,
+    STR_SC15_O1,
+    STR_SC15_O2,
+    STR_SC15_O3,
+    STR_SC15_R1,
+    STR_SC15_R2,
+    STR_SC15_R3,
+    STR_SC15_COMP,
+    STR_SC15_NEG,
+
+    STR_SC16_CALL,
+    STR_SC16_COND,
+    STR_SC16_O1,
+    STR_SC16_O2,
+    STR_SC16_O3,
+    STR_SC16_R1,
+    STR_SC16_R2,
+    STR_SC16_R3,
+    STR_SC16_COMP,
+    STR_SC16_NEG,
+
+    STR_SC17_CALL,
+    STR_SC17_COND,
+    STR_SC17_O1,
+    STR_SC17_O2,
+    STR_SC17_O3,
+    STR_SC17_R1,
+    STR_SC17_R2,
+    STR_SC17_R3,
+    STR_SC17_COMP,
+    STR_SC17_NEG,
+
+    STR_SC18_CALL,
+    STR_SC18_COND,
+    STR_SC18_O1,
+    STR_SC18_O2,
+    STR_SC18_O3,
+    STR_SC18_R1,
+    STR_SC18_R2,
+    STR_SC18_R3,
+    STR_SC18_COMP,
+    STR_SC18_NEG,
+
+    STR_SC19_CALL,
+    STR_SC19_COND,
+    STR_SC19_O1,
+    STR_SC19_O2,
+    STR_SC19_O3,
+    STR_SC19_R1,
+    STR_SC19_R2,
+    STR_SC19_R3,
+    STR_SC19_COMP,
+    STR_SC19_NEG,
+
+    STR_SC20_CALL,
+    STR_SC20_COND,
+    STR_SC20_O1,
+    STR_SC20_O2,
+    STR_SC20_O3,
+    STR_SC20_R1,
+    STR_SC20_R2,
+    STR_SC20_R3,
+    STR_SC20_COMP,
+    STR_SC20_NEG,
+
+    /* Endings */
+    STR_WIN_TITLE,
+    STR_WIN_TEXT_1,
+    STR_WIN_TEXT_2,
+    STR_WARD_307_FLASH,
+
+    STR_CARDIAC_TITLE,
+    STR_CARDIAC_TEXT,
+    STR_CARDIAC_WARD_LINE,
+
+    STR_FAINT_TITLE,
+    STR_FAINT_TEXT_1,
+    STR_FAINT_TEXT_2,
+    STR_FAINT_QUESTION,
+    STR_FAINT_ACCEPT,
+    STR_FAINT_DENY,
+    STR_FAINT_ACCEPT_TEXT,
+    STR_FAINT_ACCEPT_WARD_REVEAL,
+    STR_FAINT_DENY_TEXT,
+    STR_DENIED_BEFORE_HINT,
+
+    STR_COUNT
+} StringID;
+
+/* Devolve o texto do StringID (ou "" se o id for inválido/não preenchido). */
+const char* i18n_get(StringID id);
+
+#endif /* I18N_H */
